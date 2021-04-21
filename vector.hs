@@ -1,8 +1,8 @@
-{-# LANGUAGE DataKinds, StandaloneKindSignatures, GADTs #-}
+{-# LANGUAGE DataKinds, StandaloneKindSignatures, GADTs, TypeFamilies #-}
 
 module Vector where
     
-import Prelude hiding ( head, tail )
+import Prelude hiding ( head, tail, last, init )
 import Data.Kind ( Type )
 
 data Nat = Zero | Succ Nat
@@ -31,6 +31,14 @@ head (x :> _) = x
 
 tail :: Vec (Succ n) a -> Vec n a
 tail (_ :> xs) = xs
+
+last :: Vec (Succ n) a -> a
+last (x :> Nil) = x
+last (_ :> xs) = case xs of x' :> xs' -> last xs
+
+init :: Vec (Succ n) a -> Vec n a
+init (_ :> Nil) = Nil
+init (x :> xs) = case xs of x' :> xs' -> x :> init xs
 
 type Three = Succ (Succ (Succ Zero))
 
