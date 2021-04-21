@@ -1,7 +1,9 @@
 {-# LANGUAGE DataKinds, StandaloneKindSignatures, GADTs #-}
 
 module Vector where
-import Data.Kind
+    
+import Prelude hiding ( head, tail )
+import Data.Kind ( Type )
 
 data Nat = Zero | Succ Nat
 
@@ -23,6 +25,12 @@ instance Show a => Show (Vec n a) where
     show Nil = "Nil"
     show (x :> xs) = show x ++ " :> " ++ show xs
 
+
+head :: Vec (Succ n) a -> a
+head (x :> _) = x
+
+tail :: Vec (Succ n) a -> Vec n a
+tail (_ :> xs) = xs
 
 type Three = Succ (Succ (Succ Zero))
 
