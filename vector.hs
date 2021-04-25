@@ -1,10 +1,12 @@
 {-# LANGUAGE DataKinds, StandaloneKindSignatures, GADTs, TypeFamilies,
-             FlexibleInstances, MultiParamTypeClasses, TypeOperators
+             FlexibleInstances, MultiParamTypeClasses, TypeOperators,
+             UndecidableInstances
 #-}
 
 module Vector where
     
-import Prelude hiding ( head, tail, last, init, (++) )
+import Prelude ( Num, Show, Functor, Eq, show, fmap, (==), concat, (&&),
+                 Bool( True ) )
 import Data.Kind ( Type )
 
 data Nat = Zero | Succ Nat
@@ -12,6 +14,10 @@ data Nat = Zero | Succ Nat
 type family (x :: Nat) + (y :: Nat) where
     Zero     + y = y
     (Succ x) + y = Succ (x + y)
+
+type family (x :: Nat) :* (y :: Nat) where
+    Zero     :* y = Zero
+    (Succ x) :* y = y + (x :* y)
 
 type Vec :: Nat -> Type -> Type
 data Vec n a where
@@ -49,6 +55,10 @@ init (x :> xs) = case xs of x' :> xs' -> x :> init xs
 (++) :: Vec n a -> Vec m a -> Vec (n + m) a
 (++) (x :> xs) ys = x :> (xs ++ ys)
 (++) Nil       ys = ys
+
+concat' :: Vec n (Vec m a) -> Vec (n :* m) a
+concat' Nil       = Nil
+concat' (x :> xs) = x ++ concat' xs
 
 type Three = Succ (Succ (Succ Zero))
 
