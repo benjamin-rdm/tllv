@@ -57,8 +57,8 @@ init (_ :> Nil) = Nil
 init (x :> xs) = case xs of x' :> xs' -> x :> init xs
 
 (++) :: Vec n a -> Vec m a -> Vec (n + m) a
-(++) (x :> xs) ys = x :> (xs ++ ys)
-(++) Nil       ys = ys
+(x :> xs) ++ ys = x :> (xs ++ ys)
+Nil       ++ ys = ys
 
 zipWith :: (a -> b -> c) -> Vec n a -> Vec n b -> Vec n c
 zipWith f (a :> as) (b :> bs) = f a b :> zipWith f as bs
@@ -70,9 +70,9 @@ concat :: Vec n (Vec m a) -> Vec (n :* m) a
 concat Nil       = Nil
 concat (x :> xs) = x ++ concat xs
 
-snoc :: a -> Vec n a -> Vec (Succ n) a
-snoc a Nil       = a :> Nil
-snoc a (x :> xs) = x :> snoc a xs
+(<:) :: Vec n a -> a -> Vec (Succ n) a
+Nil       <: a = a :> Nil
+(x :> xs) <: a = x :> xs <: a
 
 class Repeat (n :: Nat) where
     repeat :: a -> Vec n a
@@ -90,7 +90,7 @@ instance Reverse Zero where
     reverse Nil = Nil
 
 instance Reverse n => Reverse (Succ n) where
-    reverse (x :> xs) = snoc x (reverse xs)
+    reverse (x :> xs) = reverse xs <: x
 
 type Three = Succ (Succ (Succ Zero))
 
