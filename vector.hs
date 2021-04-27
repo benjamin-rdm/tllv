@@ -6,7 +6,7 @@ module Vector where
     
 import Prelude ( Num, Show, Functor, Eq, Ord, show, fmap, (==), (&&),
                  Bool( True, False ), Applicative, (<*>), pure, ($), (<$>),
-                 compare, min, max, (+) )
+                 compare, min, max, (+), Ordering (LT) )
 import qualified Prelude as P
 import Data.Kind ( Type )
 import Control.Applicative ( liftA2 )
@@ -86,6 +86,12 @@ concat (x :> xs) = x ++ concat xs
 (<:) :: Vec n a -> a -> Vec (Succ n) a
 Nil       <: a = a :> Nil
 (x :> xs) <: a = x :> (xs <: a)
+
+insert :: Ord a => a -> Vec n a -> Vec (Succ n) a
+insert a Nil = a :> Nil
+insert a (b :> bs) = case compare a b of 
+    LT -> a :> b :> bs
+    _  -> b :> insert a bs 
 
 class Repeat (n :: Nat) where
     repeat :: a -> Vec n a
