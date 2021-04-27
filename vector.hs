@@ -70,6 +70,10 @@ concat :: Vec n (Vec m a) -> Vec (n :* m) a
 concat Nil       = Nil
 concat (x :> xs) = x ++ concat xs
 
+snoc :: a -> Vec n a -> Vec (Succ n) a
+snoc a Nil       = a :> Nil
+snoc a (x :> xs) = x :> snoc a xs
+
 class Repeat (n :: Nat) where
     repeat :: a -> Vec n a
 
@@ -78,6 +82,15 @@ instance Repeat Zero where
 
 instance Repeat n => Repeat (Succ n) where
     repeat a = a :> repeat a
+
+class Reverse (n :: Nat) where
+    reverse :: Vec n a -> Vec n a
+
+instance Reverse Zero where
+    reverse Nil = Nil
+
+instance Reverse n => Reverse (Succ n) where
+    reverse (x :> xs) = snoc x (reverse xs)
 
 type Three = Succ (Succ (Succ Zero))
 
