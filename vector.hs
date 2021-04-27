@@ -65,6 +65,9 @@ init :: Vec (Succ n) a -> Vec n a
 init (_ :> Nil) = Nil
 init (x :> xs) = case xs of x' :> xs' -> x :> init xs
 
+uncons :: Vec (Succ n) a -> (a, Vec n a)
+uncons (x :> xs) = (x, xs)
+
 (++) :: Vec n a -> Vec m a -> Vec (n + m) a
 (x :> xs) ++ ys = x :> (xs ++ ys)
 Nil       ++ ys = ys
