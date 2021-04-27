@@ -8,9 +8,7 @@ module Natural where
 data Nat = Zero | Succ Nat
 
 instance Eq Nat where
-    (Succ n) == (Succ m) = n == m
-    Zero     == Zero     = True
-    _        == _        = False
+    n == m = compare n m == EQ
 
 instance Ord Nat where
     compare (Succ n) (Succ m) = compare n m
