@@ -79,6 +79,7 @@ Nil       ++ ys = ys
 
 zipWith :: (a -> b -> c) -> Vec n a -> Vec n b -> Vec n c
 zipWith f (a :> as) (b :> bs) = f a b :> zipWith f as bs
+zipWith _ Nil       Nil       = Nil
 
 zip :: Vec n a -> Vec n b -> Vec n (a,b)
 zip = zipWith (,)
