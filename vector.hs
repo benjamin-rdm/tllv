@@ -6,10 +6,12 @@
 module Vector where
     
 import Prelude ( Num, Show, Functor, Eq, Ord, show, fmap, (==), (&&),
-                 Bool( True ), Applicative, (<*>), pure, ($), (<$>) )
+                 Bool( True ), Applicative, (<*>), pure, ($), (<$>),
+                 compare )
 import qualified Prelude as P
 import Data.Kind ( Type )
 import Control.Applicative ( liftA2 )
+import Data.Foldable ( Foldable, fold, foldr )
 
 data Nat = Zero | Succ Nat
 
@@ -43,6 +45,13 @@ instance Repeat n => Applicative (Vec n) where
     pure = repeat
     (<*>) = zipWith ($)
     liftA2 = zipWith
+
+instance Foldable (Vec n) where
+    foldr f b Nil       = b
+    foldr f b (x :> xs) = f x (foldr f b xs)
+
+instance Ord a => Ord (Vec n a) where
+    compare xs ys = fold (zipWith compare xs ys)
 
 head :: Vec (Succ n) a -> a
 head (x :> _) = x
@@ -104,6 +113,10 @@ instance Iterate n => Iterate (Succ n) where
     iterate f a = a :> (f <$> iterate f a)
 
 type Three = Succ (Succ (Succ Zero))
+
+toList :: Vec n a -> [a]
+toList Nil       = []
+toList (x :> xs) = x : toList xs
 
 example1 :: Num a => Vec Three a
 example1 = 1 :> 2 :> 3 :> Nil
