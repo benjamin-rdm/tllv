@@ -6,7 +6,7 @@ module Vector where
     
 import Prelude ( Num, Show, Functor, Eq, Ord, show, fmap, (==), (&&),
                  Bool( True, False ), Applicative, (<*>), pure, ($), (<$>),
-                 compare, min, max, (+), Ordering (LT) )
+                 compare, min, max, (+), Ordering ( LT, EQ ) )
 import qualified Prelude as P
 import Data.Kind ( Type )
 import Control.Applicative ( liftA2 )
@@ -92,6 +92,19 @@ insert a Nil = a :> Nil
 insert a (b :> bs) = case compare a b of 
     LT -> a :> b :> bs
     _  -> b :> insert a bs 
+
+sort :: Ord a => Vec n a -> Vec n a
+sort (x :> xs) = insert x (sort xs)
+sort Nil = Nil
+
+{- This function would be needed to implement mergesort, but it (EQ,GT)-case does not type-check
+mergeSorted :: Ord a => Vec n a -> Vec m a -> Vec (n + m) a
+mergeSorted Nil       Nil       = Nil
+mergeSorted x@(a :> as) y@(b :> bs) = case compare a b of
+    LT -> a :> mergeSorted as y
+    EQ -> a :> b :> mergeSorted as bs
+    _  -> mergeSorted x y
+-}
 
 class Repeat (n :: Nat) where
     repeat :: a -> Vec n a
