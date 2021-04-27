@@ -5,7 +5,7 @@
 module Vector where
     
 import Prelude ( Num, Show, Functor, Eq, Ord, show, fmap, (==), (&&),
-                 Bool( True ), Applicative, (<*>), pure, ($), (<$>),
+                 Bool( True, False ), Applicative, (<*>), pure, ($), (<$>),
                  compare, min, max, (+) )
 import qualified Prelude as P
 import Data.Kind ( Type )
@@ -15,8 +15,8 @@ import Data.Foldable ( Foldable, fold, foldr, foldl, toList )
 import Natural
 
 data Vec (n :: Nat) a where
-  Nil :: Vec Zero a
-  (:>) :: a -> Vec n a -> Vec (Succ n) a
+    Nil :: Vec Zero a
+    (:>) :: a -> Vec n a -> Vec (Succ n) a
 infixr 5 :>
 
 instance Eq a => Eq (Vec n a) where
@@ -37,8 +37,8 @@ instance Repeat n => Applicative (Vec n) where
     liftA2 = zipWith
 
 instance Foldable (Vec n) where
-    foldr f b Nil       = b
     foldr f b (x :> xs) = f x (foldr f b xs)
+    foldr _ b _         = b
 
 instance Ord a => Ord (Vec n a) where
     compare xs ys = fold (zipWith compare xs ys)
