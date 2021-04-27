@@ -5,8 +5,8 @@
 
 module Vector where
     
-import Prelude ( Num, Show, Functor, Eq, show, fmap, (==), (&&),
-                 Bool( True ), Applicative, (<*>), pure, ($) )
+import Prelude ( Num, Show, Functor, Eq, Ord, show, fmap, (==), (&&),
+                 Bool( True ), Applicative, (<*>), pure, ($), (<$>) )
 import qualified Prelude as P
 import Data.Kind ( Type )
 import Control.Applicative ( liftA2 )
@@ -93,6 +93,15 @@ instance Reverse Zero where
 
 instance Reverse n => Reverse (Succ n) where
     reverse (x :> xs) = reverse xs <: x
+
+class Iterate (n :: Nat) where
+    iterate :: (a -> a) -> a -> Vec n a
+
+instance Iterate Zero where
+    iterate _ _ = Nil
+
+instance Iterate n => Iterate (Succ n) where
+    iterate f a = a :> (f <$> iterate f a)
 
 type Three = Succ (Succ (Succ Zero))
 
