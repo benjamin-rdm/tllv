@@ -5,7 +5,7 @@
 
 module Natural where
 
-data Nat = Zero | Succ Nat
+data Nat = Zero | Succ Nat deriving Show
 
 instance Eq Nat where
     n == m = compare n m == EQ
