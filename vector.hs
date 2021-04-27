@@ -5,8 +5,9 @@
 
 module Vector where
     
-import Prelude ( Num, Show, Functor, Eq, show, fmap, (==), concat, (&&),
+import Prelude ( Num, Show, Functor, Eq, show, fmap, (==), (&&),
                  Bool( True ) )
+import qualified Prelude as P
 import Data.Kind ( Type )
 
 data Nat = Zero | Succ Nat
@@ -35,8 +36,7 @@ instance Functor (Vec n) where
 
 instance Show a => Show (Vec n a) where
     show Nil       = "Nil"
-    show (x :> xs) = concat [show x, " :> ", show xs]
-
+    show (x :> xs) = P.concat [show x, " :> ", show xs]
 
 head :: Vec (Succ n) a -> a
 head (x :> _) = x
@@ -56,9 +56,15 @@ init (x :> xs) = case xs of x' :> xs' -> x :> init xs
 (++) (x :> xs) ys = x :> (xs ++ ys)
 (++) Nil       ys = ys
 
-concat' :: Vec n (Vec m a) -> Vec (n :* m) a
-concat' Nil       = Nil
-concat' (x :> xs) = x ++ concat' xs
+zipWith :: (a -> b -> c) -> Vec n a -> Vec n b -> Vec n c
+zipWith f (a :> as) (b :> bs) = f a b :> zipWith f as bs
+
+zip :: Vec n a -> Vec n b -> Vec n (a,b)
+zip = zipWith (,)
+
+concat :: Vec n (Vec m a) -> Vec (n :* m) a
+concat Nil       = Nil
+concat (x :> xs) = x ++ concat xs
 
 type Three = Succ (Succ (Succ Zero))
 
