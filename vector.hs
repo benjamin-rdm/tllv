@@ -1,26 +1,18 @@
 {-# LANGUAGE DataKinds, GADTs, TypeFamilies, FlexibleInstances, 
-             MultiParamTypeClasses, TypeOperators, UndecidableInstances
+             MultiParamTypeClasses, TypeOperators
 #-}
 
 module Vector where
     
 import Prelude ( Num, Show, Functor, Eq, Ord, show, fmap, (==), (&&),
                  Bool( True ), Applicative, (<*>), pure, ($), (<$>),
-                 compare, min, max )
+                 compare, min, max, (+) )
 import qualified Prelude as P
 import Data.Kind ( Type )
 import Control.Applicative ( liftA2 )
 import Data.Foldable ( Foldable, fold, foldr, foldl, toList )
 
-data Nat = Zero | Succ Nat
-
-type family (x :: Nat) + (y :: Nat) where
-    Zero     + y = y
-    (Succ x) + y = Succ (x + y)
-
-type family (x :: Nat) :* (y :: Nat) where
-    Zero     :* y = Zero
-    (Succ x) :* y = y + (x :* y)
+import Natural
 
 data Vec (n :: Nat) a where
   Nil :: Vec Zero a
@@ -121,5 +113,6 @@ instance Iterate n => Iterate (Succ n) where
 
 type Three = Succ (Succ (Succ Zero))
 
-example1 :: Num a => Vec Three a
+example1, example1' :: Num a => Vec Three a
 example1 = 1 :> 2 :> 3 :> Nil
+example1' = iterate (+1) 1
