@@ -6,11 +6,11 @@ module Vector where
     
 import Prelude ( Num, Show, Functor, Eq, Ord, show, fmap, (==), (&&),
                  Bool( True ), Applicative, (<*>), pure, ($), (<$>),
-                 compare )
+                 compare, min, max )
 import qualified Prelude as P
 import Data.Kind ( Type )
 import Control.Applicative ( liftA2 )
-import Data.Foldable ( Foldable, fold, foldr, toList )
+import Data.Foldable ( Foldable, fold, foldr, foldl, toList )
 
 data Nat = Zero | Succ Nat
 
@@ -50,6 +50,14 @@ instance Foldable (Vec n) where
 
 instance Ord a => Ord (Vec n a) where
     compare xs ys = fold (zipWith compare xs ys)
+
+foldr1, foldl1 :: (a -> a -> a) -> Vec (Succ n) a -> a
+foldr1 f (x :> xs) = foldr f x xs
+foldl1 f (x :> xs) = foldl f x xs
+
+minimum, maximum :: Ord a => Vec (Succ n) a -> a
+minimum = foldr1 min
+maximum = foldr1 max
 
 head :: Vec (Succ n) a -> a
 head (x :> _) = x
