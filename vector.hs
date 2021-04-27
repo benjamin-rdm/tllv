@@ -6,7 +6,7 @@
 module Vector where
     
 import Prelude ( Num, Show, Functor, Eq, show, fmap, (==), (&&),
-                 Bool( True ) )
+                 Bool( True ), Applicative, (<*>), pure )
 import qualified Prelude as P
 import Data.Kind ( Type )
 
@@ -38,6 +38,10 @@ instance Show a => Show (Vec n a) where
     show Nil       = "Nil"
     show (x :> xs) = P.concat [show x, " :> ", show xs]
 
+instance Repeat n => Applicative (Vec n) where
+    pure = repeat
+    fs <*> xs = zipWith (\f x -> f x) fs xs
+
 head :: Vec (Succ n) a -> a
 head (x :> _) = x
 
@@ -65,6 +69,15 @@ zip = zipWith (,)
 concat :: Vec n (Vec m a) -> Vec (n :* m) a
 concat Nil       = Nil
 concat (x :> xs) = x ++ concat xs
+
+class Repeat (n :: Nat) where
+    repeat :: a -> Vec n a
+
+instance Repeat Zero where
+    repeat _ = Nil
+
+instance Repeat n => Repeat (Succ n) where
+    repeat a = a :> repeat a
 
 type Three = Succ (Succ (Succ Zero))
 
