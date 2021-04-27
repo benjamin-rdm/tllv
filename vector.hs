@@ -72,7 +72,7 @@ concat (x :> xs) = x ++ concat xs
 
 (<:) :: Vec n a -> a -> Vec (Succ n) a
 Nil       <: a = a :> Nil
-(x :> xs) <: a = x :> xs <: a
+(x :> xs) <: a = x :> (xs <: a)
 
 class Repeat (n :: Nat) where
     repeat :: a -> Vec n a
