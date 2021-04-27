@@ -6,9 +6,10 @@
 module Vector where
     
 import Prelude ( Num, Show, Functor, Eq, show, fmap, (==), (&&),
-                 Bool( True ), Applicative, (<*>), pure )
+                 Bool( True ), Applicative, (<*>), pure, ($) )
 import qualified Prelude as P
 import Data.Kind ( Type )
+import Control.Applicative ( liftA2 )
 
 data Nat = Zero | Succ Nat
 
@@ -40,7 +41,8 @@ instance Show a => Show (Vec n a) where
 
 instance Repeat n => Applicative (Vec n) where
     pure = repeat
-    fs <*> xs = zipWith (\f x -> f x) fs xs
+    (<*>) = zipWith ($)
+    liftA2 = zipWith
 
 head :: Vec (Succ n) a -> a
 head (x :> _) = x
