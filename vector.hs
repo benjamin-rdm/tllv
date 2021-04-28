@@ -58,12 +58,14 @@ tail :: Vec (Succ n) a -> Vec n a
 tail (_ :> xs) = xs
 
 last :: Vec (Succ n) a -> a
-last (x :> Nil) = x
-last (_ :> xs) = case xs of x' :> xs' -> last xs
+last (x :> xs) = case xs of 
+    Nil  -> x
+    _:>_ -> last xs
 
 init :: Vec (Succ n) a -> Vec n a
-init (_ :> Nil) = Nil
-init (x :> xs) = case xs of x' :> xs' -> x :> init xs
+init (x :> xs) = case xs of 
+    Nil  -> Nil
+    _:>_ -> x :> init xs
 
 uncons :: Vec (Succ n) a -> (a, Vec n a)
 uncons (x :> xs) = (x, xs)
