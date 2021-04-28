@@ -102,14 +102,15 @@ sort :: Ord a => Vec n a -> Vec n a
 sort (x :> xs) = insert x (sort xs)
 sort Nil = Nil
 
-{- This function would be needed to implement mergesort, but it (EQ,GT)-case does not type-check
 mergeSorted :: Ord a => Vec n a -> Vec m a -> Vec (n + m) a
 mergeSorted Nil       Nil       = Nil
 mergeSorted x@(a :> as) y@(b :> bs) = case compare a b of
     LT -> a :> mergeSorted as y
-    EQ -> a :> b :> mergeSorted as bs
-    _  -> mergeSorted x y
--}
+    _  -> b :> mergeSorted as (insert a bs)
+    -- This implementation is really unfortunate.
+    -- "_ -> b :> mergeSorted x bs" would certainly be faster
+    -- because the insert created an extra layer of complexity
+    -- but I haved found a way to make that type-check
 
 class Repeat (n :: Nat) where
     repeat :: a -> Vec n a
