@@ -79,6 +79,9 @@ zipWith _ Nil       Nil       = Nil
 zip :: Vec n a -> Vec n b -> Vec n (a,b)
 zip = zipWith (,)
 
+unzip :: Vec n (a, b) -> (Vec n a, Vec n b)
+unzip ((a, b) :> xs) = let (as, bs) = unzip xs in (a :> as, b :> bs)
+
 concat :: Vec n (Vec m a) -> Vec (n :* m) a
 concat Nil       = Nil
 concat (x :> xs) = x ++ concat xs
